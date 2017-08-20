@@ -289,36 +289,81 @@ for i in range(5):
       column = int(input("Column: "))
       if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
         print("Invalid selection, select another point")
+        time.sleep(2)
       elif (shipboard_user[row][column] == "|") or (shipboard_user[row][column] == "-"):
         print("There's already part of a ship at that point, select another point")
+        time.sleep(2)
       elif (check_possible_directions([row, column], ship_dict[i][1], shipboard_user, boardlength) is False):
         print("This ship won't fit in any direction, from this point, select another point")
+        time.sleep(2)
       else:
         invalid = False
 
     ## Get the direction the user wants the ship to go
     while (direction < 0) or (direction > 4):
       direction = -1
-      direction = int(input("What direction do you want the ship to go? (0 = up, 1 = down, 2 = left, 3 = right, 4 = choose a different starting point)"))
+      direction = int(input("What direction do you want the ship to go? (0 = up, 1 = down, 2 = left, 3 = right, 4 = choose a different starting point):\n"))
       if (direction < 0) or (direction > 4):
         print("Invalid input")
+        time.sleep(2)
       elif (direction == 4):
         cancelInput = True
-      elif (check_overlap([row, column], ship_dict[i][1], direction, shipboard_user) is False):
-        print("Ship overlaps with another ship, choose a different direction")
-      elif (direction == 0) and (check_overlap(row-(ship_dict[i][1]-1)) is True):
-        place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
-      elif (direction == 1) and (check_overlap(row+(ship_dict[i][1]-1)) is True):
-        place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
-      elif (direction == 2) and (check_overlap(column-(ship_dict[i][1]-1)) is True):
-        place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
-      elif (direction == 3) and (check_overlap(column+(ship_dict[i][1]-1)) is True):
-        place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
+      elif (direction == 0):
+        if (check_board_limit(row-(ship_dict[i][1]-1), boardlength) is True):
+          if (check_overlap([row, column], ship_dict[i][1], direction, shipboard_user) is True):
+            place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
+          else:
+            print("Ship would overlap with another ship in that direction")
+            time.sleep(2)
+            direction = -1
+        else:
+          print("Ship would go out of the board in that direction")
+          direction = -1
+      elif (direction == 1):
+        if (check_board_limit(row+(ship_dict[i][1]-1), boardlength) is True): 
+          if (check_overlap([row, column], ship_dict[i][1], direction, shipboard_user) is True):
+            place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
+          else:
+            print("Ship would overlap with another ship in that direction")
+            time.sleep(2)
+            direction = -1
+        else:
+          print("Ship would go out of the board in that direction")
+          direction = -1
+      elif (direction == 2):
+        if (check_board_limit(column-(ship_dict[i][1]-1), boardlength) is True):
+          if (check_overlap([row, column], ship_dict[i][1], direction, shipboard_user)):
+            place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
+          else:
+            print("Ship would overlap with another ship in that direction")
+            time.sleep(2)
+            direction = -1
+        else:
+          print("Ship would go out of the board in that direction")
+          direction = -1
+      elif (direction == 3):
+        if (check_board_limit(column+(ship_dict[i][1]-1), boardlength) is True):      
+          if (check_overlap([row, column], ship_dict[i][1], direction, shipboard_user)):  
+            place_ship([row, column], ship_dict[i][1], direction, shipboard_user)
+          else:
+            print("Ship would overlap with another ship in that direction")
+            time.sleep(2)
+            direction = -1
+        else:
+          print("Ship would go out of the board in that direction")
+          direction = -1
       else:
-        print("Ship would go out of the board in that direction")
+        print("something broked")
+        time.sleep(2)
 
-
-print("Game starting!")
+print("   _____          __  __ ______    _____ _______       _____ _______ _____ _   _  _____") 
+print("  / ____|   /\   |  \/  |  ____|  / ____|__   __|/\   |  __ \__   __|_   _| \ | |/ ____|")
+print(" | |  __   /  \  | \  / | |__    | (___    | |  /  \  | |__) | | |    | | |  \| | |  __ ")
+print(" | | |_ | / /\ \ | |\/| |  __|    \___ \   | | / /\ \ |  _  /  | |    | | | . ` | | |_ |")
+print(" | |__| |/ ____ \| |  | | |____   ____) |  | |/ ____ \| | \ \  | |   _| |_| |\  | |__| |")
+print("  \_____/_/    \_\_|  |_|______| |_____/   |_/_/    \_\_|  \_\ |_|  |_____|_| \_|\_____|")
+                                                                                        
+                                                                                        
 time.sleep(2)
 os.system('cls')
 print("YOUR TURN!")
@@ -327,6 +372,9 @@ print_board(shipboard_user)
 print("")
 print("Your moves:")
 print_board(trackboard_user)
+print("H = Hit")
+print("M = Miss")
+
 
 
 
