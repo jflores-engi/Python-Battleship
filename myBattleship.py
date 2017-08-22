@@ -228,6 +228,98 @@ def create_ship(ship, boardlength, board):
   if directionsTried >= 4:
     create_ship(ship, boardlength, board)
 
+
+## The 2 following functions will be for the player's and the computer's turn
+def user_turn(shipboard_user, trackboard_user, shipboard_AI, boardlength, hits_user):
+  os.system('cls')
+  if(hits_user == 17):
+    return hits_user
+  print("YOUR TURN!")
+  print("Your board:")
+  print_board(shipboard_user)
+  print("")
+  print("Your moves:")
+  print_board(trackboard_user)
+  print("H = Hit")
+  print("M = Miss")
+  print("")
+  print("")
+  print("Choose where do you want to attack the enemy:")
+  row = -1
+  column = -1
+  while (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False) or (shipboard_AI[row][column] == "X"):
+    try:
+      row = int(input("Row: "))
+    except ValueError:
+      print("Invalid input, enter an integer from 0 to " + str(boardlength-1))
+      time.sleep(2)
+      row = -1
+      column = -1
+      continue
+    try:
+      column = int(input("Column: "))
+    except ValueError:
+      print("Invalid input, enter an integer from 0 to " + str(boardlength-1))
+      time.sleep(2)
+      row = -1
+      column = -1
+      continue
+    if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
+      print("Invalid coordinates, select another set of coordinates!")
+      time.sleep(2)
+    elif (shipboard_AI[row][column] == "X"):
+      print("Coordinates has already been attacked, select another set of coordinates!")
+      time.sleep(2)
+    else:
+      if(shipboard_AI[row][column] == "|") or (shipboard_AI[row][column] == "-"):
+        print("You've hit an enemy ship!")
+        shipboard_AI[row][column] = "X"
+        trackboard_user[row][column] = "H"
+        time.sleep(2)
+        return user_turn(shipboard_user, trackboard_user, shipboard_AI, boardlength, hits_user + 1)
+      else:
+        print("Miss!")
+        trackboard_user[row][column] = "M"
+        time.sleep(2)
+        return hits_user
+
+def AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI):
+  os.system('cls')
+  if(hits_AI == 17):
+    return hits_AI
+  print("Computer's turn...")
+  print("")
+  print("Your board:")
+  print_board(shipboard_user)
+  print("")
+  print("Your moves:")
+  print_board(trackboard_user)
+  print("H = Hit")
+  print("M = Miss")
+  print("")
+  print("")
+  row = -1
+  column = -1
+  while (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False) or (shipboard_user[row][column] == "X"):
+    row = randint(0, boardlength-1)
+    column = randint(0, boardlength-1)
+    if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
+      pass
+    elif (shipboard_user[row][column] == "X"):
+      pass
+    else:
+      if (shipboard_user[row][column] == "|") or (shipboard_user[row][column] == "-"):
+        print("You've been hit")
+        shipboard_user[row][column] = "X"
+        trackboard_AI[row][column] = "H"
+        time.sleep(2)
+        return AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI)
+      else:
+        print("Computer missed")
+        trackboard_AI[row][column] = "M"
+        time.sleep(2)
+        return AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI)
+
 ####################################################################################################################
 os.system('cls')
 boardlength = 10
@@ -285,8 +377,22 @@ for i in range(5):
       print_board(shipboard_user)
       print("")
       print("Starting point: ")
-      row = int(input("Row: "))
-      column = int(input("Column: "))
+      try:
+        row = int(input("Row: "))
+      except ValueError:
+        print("Invalid input, enter an integer from 0 to " + str(boardlength-1))
+        time.sleep(2)
+        row = -1
+        column = -1
+        continue
+      try:
+        column = int(input("Column: "))
+      except ValueError:
+        print("Invalid input, enter an integer from 0 to " + str(boardlength-1))
+        time.sleep(2)
+        row = -1
+        column = -1
+        continue
       if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
         print("Invalid selection, select another point")
         time.sleep(2)
@@ -302,7 +408,13 @@ for i in range(5):
     ## Get the direction the user wants the ship to go
     while (direction < 0) or (direction > 4):
       direction = -1
-      direction = int(input("What direction do you want the ship to go? (0 = up, 1 = down, 2 = left, 3 = right, 4 = choose a different starting point):\n"))
+      try:
+        direction = int(input("What direction do you want the ship to go? (0 = up, 1 = down, 2 = left, 3 = right, 4 = choose a different starting point):\n"))
+      except ValueError:
+        print("Invalid input, enter an integer from 0 to 4")
+        time.sleep(2)
+        direction = -1
+        continue
       if (direction < 0) or (direction > 4):
         print("Invalid input")
         time.sleep(2)
@@ -366,17 +478,33 @@ print("  \_____/_/    \_\_|  |_|______| |_____/   |_/_/    \_\_|  \_\ |_|  |____
                                                                                         
 time.sleep(2)
 os.system('cls')
-print("YOUR TURN!")
+
+hits_user = 0
+hits_AI = 0
+
+while (hits_user < 17) or (hits_AI < 17):
+  hits_user = user_turn(shipboard_user, trackboard_user, shipboard_AI, boardlength, hits_user)
+  if (hits_user == 17):
+    os.system('cls')
+    print("You won!")
+    break
+  hits_AI = AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI)
+  if (hits_AI == 17):
+    os.system('cls')
+    print("Computer won!")
+    break
+
+print("")
+print("Final boards:")
 print("Your board:")
 print_board(shipboard_user)
 print("")
-print("Your moves:")
-print_board(trackboard_user)
-print("H = Hit")
-print("M = Miss")
-
-
-
+print("Your hits = " + str(hits_user))
+print("")
+print("Computer's board:")
+print_board(shipboard_AI)
+print("")
+print("Your hits = " + str(hits_AI))
 
 # # Everything from here on should go in your for loop!
 # # Be sure to indent four spaces!
