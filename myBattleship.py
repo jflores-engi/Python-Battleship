@@ -234,20 +234,22 @@ def user_turn(shipboard_user, trackboard_user, shipboard_AI, boardlength, hits_u
   os.system('cls')
   if(hits_user == 17):
     return hits_user
-  print("YOUR TURN!")
-  print("Your board:")
-  print_board(shipboard_user)
-  print("")
-  print("Your moves:")
-  print_board(trackboard_user)
-  print("H = Hit")
-  print("M = Miss")
-  print("")
-  print("")
-  print("Choose where do you want to attack the enemy:")
+  
   row = -1
   column = -1
   while (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False) or (shipboard_AI[row][column] == "X"):
+    os.system('cls')
+    print("YOUR TURN!")
+    print("Your board:")
+    print_board(shipboard_user)
+    print("")
+    print("Your moves:")
+    print_board(trackboard_user)
+    print("H = Hit")
+    print("M = Miss")
+    print("")
+    print("")
+    print("Choose where do you want to attack the enemy:")
     try:
       row = int(input("Row: "))
     except ValueError:
@@ -267,9 +269,13 @@ def user_turn(shipboard_user, trackboard_user, shipboard_AI, boardlength, hits_u
     if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
       print("Invalid coordinates, select another set of coordinates!")
       time.sleep(2)
-    elif (shipboard_AI[row][column] == "X"):
+      continue
+    elif (trackboard_user[row][column] == "H") or (trackboard_user[row][column] == "M"):
       print("Coordinates has already been attacked, select another set of coordinates!")
       time.sleep(2)
+      row = -1
+      column = -1
+      continue
     else:
       if(shipboard_AI[row][column] == "|") or (shipboard_AI[row][column] == "-"):
         print("You've hit an enemy ship!")
@@ -303,10 +309,24 @@ def AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI):
   while (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False) or (shipboard_user[row][column] == "X"):
     row = randint(0, boardlength-1)
     column = randint(0, boardlength-1)
+    os.system('cls')
+    print("Computer's turn...")
+    print("")
+    print("Your board:")
+    print_board(shipboard_user)
+    print("")
+    print("Your moves:")
+    print_board(trackboard_user)
+    print("H = Hit")
+    print("M = Miss")
+    print("")
+    print("")
     if (check_board_limit(row, boardlength) is False) or (check_board_limit(column, boardlength) is False):
-      pass
-    elif (shipboard_user[row][column] == "X"):
-      pass
+      continue
+    elif (trackboard_AI[row][column] == "H") or (trackboard_AI[row][column] == "M"):
+      row = -1
+      column = -1
+      continue
     else:
       if (shipboard_user[row][column] == "|") or (shipboard_user[row][column] == "-"):
         print("You've been hit")
@@ -318,7 +338,7 @@ def AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI):
         print("Computer missed")
         trackboard_AI[row][column] = "M"
         time.sleep(2)
-        return AI_turn(shipboard_AI, trackboard_AI, shipboard_user, boardlength, hits_AI)
+        return hits_AI
 
 ####################################################################################################################
 os.system('cls')
